@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Mock Exam Results</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"></head>
+<body><nav class="navbar navbar-light bg-light"><a class="navbar-brand" href="{% url 'onlinecourse:index' %}">Home</a></nav>
+<main class="container my-4">
+  {% if grade >= 80 %}<div class="alert alert-success"><h1 class="h4">Congratulations, {{ user.first_name|default:user.username }}!</h1>You have passed the exam with score {{ grade }}/100.</div>{% else %}<div class="alert alert-danger"><h1 class="h4">Keep practicing!</h1>Your score is {{ grade }}/100. Review the answers below and try again.</div>{% endif %}
+  <div class="card mb-4"><div class="card-body"><h2 class="h5">Exam results</h2><p><strong>Score:</strong> {{ score }} / {{ possible }} ({{ grade }}%)</p></div></div>
+  {% for item in results %}<div class="card mb-3"><div class="card-header">{{ forloop.counter }}. {{ item.question.question_text }}</div><div class="card-body">
+    {% for choice in item.choices %}<p>{% if choice.id in item.correct_ids %}<span class="text-success font-weight-bold">Correct answer: {{ choice.choice_text }}</span>{% elif choice.id in item.selected_ids %}<span class="text-danger">Your answer: {{ choice.choice_text }}</span>{% else %}{{ choice.choice_text }}{% endif %}</p>{% endfor %}
+    {% if item.is_correct %}<span class="badge badge-success">Correct</span>{% else %}<span class="badge badge-danger">Incorrect</span>{% endif %}
+  </div></div>{% empty %}<p>No questions are configured for this course yet.</p>{% endfor %}
+  <a class="btn btn-primary" href="{% url 'onlinecourse:course_details' course.id %}">Back to course</a>
+</main></body></html>
